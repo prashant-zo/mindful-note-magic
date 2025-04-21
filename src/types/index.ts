@@ -22,6 +22,7 @@ export interface NoteFormData {
   title: string;
   content: string;
   color: NoteColor;
+  summary?: string;
 }
 
 export interface AuthFormData {
