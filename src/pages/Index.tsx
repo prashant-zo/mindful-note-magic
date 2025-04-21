@@ -1,14 +1,25 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+
+import { useAuth } from '@/hooks/useAuth';
+import Auth from './Auth';
+import Dashboard from './Dashboard';
+import { Skeleton } from '@/components/ui/skeleton';
 
 const Index = () => {
-  return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">Welcome to Your Blank App</h1>
-        <p className="text-xl text-gray-600">Start building your amazing project here!</p>
+  const { user, isLoading } = useAuth();
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="w-full max-w-md space-y-4">
+          <Skeleton className="h-12 w-3/4 mx-auto" />
+          <Skeleton className="h-4 w-1/2 mx-auto" />
+          <Skeleton className="h-[400px] w-full rounded-lg" />
+        </div>
       </div>
-    </div>
-  );
+    );
+  }
+
+  return user ? <Dashboard /> : <Auth />;
 };
 
 export default Index;
