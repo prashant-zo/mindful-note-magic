@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/useAuth';
 import { LogOut, Plus } from 'lucide-react';
 import { toast } from "@/components/ui/sonner";
+import { ApiKeyDialog } from '@/components/Settings/ApiKeyDialog';
 
 interface AppHeaderProps {
   onNewNote: () => void;
@@ -39,6 +40,8 @@ const AppHeader: React.FC<AppHeaderProps> = ({ onNewNote }) => {
             <Plus className="h-4 w-4 mr-1" />
             New Note
           </Button>
+
+          <ApiKeyDialog />
 
           <Button
             variant="ghost"
