@@ -1,4 +1,6 @@
 
+import { toast } from "@/components/ui/sonner";
+
 interface GeminiResponse {
   candidates: Array<{
     content: {
