@@ -1,61 +1,52 @@
 
 import { toast } from "@/components/ui/sonner";
 
-// This is a mock AI service
-// In a real app, you would use a real AI API like DeepSeek or Groq
+interface DeepSeekResponse {
+  text: string;
+}
+
 export const aiService = {
   summarize: async (text: string): Promise<string> => {
     try {
-      // Simulate API delay
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      const apiKey = localStorage.getItem('deepseek_api_key');
       
-      // For demo purposes, create a simple summary
-      // In a real implementation, this would call an actual AI API
-      
-      // Find first sentence
-      const firstSentenceEnd = text.search(/[.!?]/);
-      const firstSentence = firstSentenceEnd > 0 
-        ? text.substring(0, firstSentenceEnd + 1) 
-        : '';
-      
-      // Count paragraphs
-      const paragraphs = text.split(/\n\n+/).filter(Boolean);
-      const paragraphCount = paragraphs.length;
-      
-      // Extract key phrases
-      const words = text.split(/\s+/);
-      const keyWords = words
-        .filter(word => word.length > 5)
-        .filter(word => !word.match(/[0-9]/))
-        .map(word => word.replace(/[.,!?;:()]/g, ''))
-        .filter((value, index, self) => self.indexOf(value) === index)
-        .slice(0, 5);
-      
-      // Create a summary based on text length
-      if (text.length < 100) {
-        return firstSentence || text;
+      if (!apiKey) {
+        toast.error("DeepSeek API key not found", {
+          description: "Please enter your API key in the settings"
+        });
+        return "API key required for summarization.";
       }
-      
-      let summary = firstSentence;
-      
-      if (paragraphCount > 1) {
-        summary += ` Contains ${paragraphCount} sections.`;
+
+      const response = await fetch('https://api.deepseek.com/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${apiKey}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          model: "deepseek-chat",
+          messages: [
+            {
+              role: "system",
+              content: "You are a helpful assistant that summarizes text. Keep summaries concise and focused on key points."
+            },
+            {
+              role: "user",
+              content: `Please summarize the following text in a concise way: ${text}`
+            }
+          ],
+          max_tokens: 250,
+          temperature: 0.7
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to generate summary');
       }
-      
-      if (keyWords.length > 0) {
-        summary += ` Key topics include: ${keyWords.join(', ')}.`;
-      }
-      
-      // For longer text, add a generated conclusion
-      if (text.length > 300) {
-        const topics = keyWords.length > 0 ? 
-          `The note discusses ${keyWords.slice(0, 3).join(', ')}.` : 
-          'The note covers multiple topics.';
-        
-        summary += ` ${topics}`;
-      }
-      
-      return summary;
+
+      const data: DeepSeekResponse = await response.json();
+      return data.text;
+
     } catch (error) {
       console.error('Error in AI summarization:', error);
       toast.error("Summarization failed", {

@@ -1,4 +1,3 @@
-
 import React, { ReactNode, useState } from 'react';
 import AppHeader from './AppHeader';
 import {
@@ -11,6 +10,8 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { ApiKeyDialog } from "@/components/Settings/ApiKeyDialog";
+import { Button, Plus } from "@/components/ui/button";
 
 interface AppLayoutProps {
   children: ReactNode;
@@ -30,8 +31,20 @@ const AppLayout: React.FC<AppLayoutProps> = ({
   onConfirmDelete
 }) => {
   return (
-    <div className="min-h-screen flex flex-col">
-      <AppHeader onNewNote={onNewNote} />
+    <div className="min-h-screen bg-background">
+      <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+        <div className="container flex h-14 items-center justify-between">
+          <h1 className="text-xl font-semibold">MindNotes</h1>
+          <div className="flex items-center gap-2">
+            <ApiKeyDialog />
+            <Button onClick={onNewNote}>
+              <Plus className="h-4 w-4 mr-2" />
+              New Note
+            </Button>
+          </div>
+        </div>
+      </header>
+
       <main className="flex-1 container mx-auto px-4 pb-8">
         {children}
       </main>
