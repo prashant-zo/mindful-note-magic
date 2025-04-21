@@ -1,42 +1,42 @@
 
-import { toast } from "@/components/ui/sonner";
-
-interface DeepSeekResponse {
-  text: string;
+interface GeminiResponse {
+  candidates: Array<{
+    content: {
+      parts: Array<{
+        text: string;
+      }>;
+    };
+  }>;
 }
 
 export const aiService = {
   summarize: async (text: string): Promise<string> => {
     try {
-      const apiKey = localStorage.getItem('deepseek_api_key');
+      const apiKey = localStorage.getItem('gemini_api_key');
       
       if (!apiKey) {
-        toast.error("DeepSeek API key not found", {
+        toast.error("Gemini API key not found", {
           description: "Please enter your API key in the settings"
         });
         return "API key required for summarization.";
       }
 
-      const response = await fetch('https://api.deepseek.com/v1/chat/completions', {
+      const response = await fetch('https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent', {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${apiKey}`,
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'x-goog-api-key': apiKey
         },
         body: JSON.stringify({
-          model: "deepseek-chat",
-          messages: [
-            {
-              role: "system",
-              content: "You are a helpful assistant that summarizes text. Keep summaries concise and focused on key points."
-            },
-            {
-              role: "user",
-              content: `Please summarize the following text in a concise way: ${text}`
-            }
-          ],
-          max_tokens: 250,
-          temperature: 0.7
+          contents: [{
+            parts: [{
+              text: `Please summarize the following text in a concise way:\n\n${text}`
+            }]
+          }],
+          generationConfig: {
+            temperature: 0.7,
+            maxOutputTokens: 250,
+          }
         })
       });
 
@@ -44,8 +44,8 @@ export const aiService = {
         throw new Error('Failed to generate summary');
       }
 
-      const data: DeepSeekResponse = await response.json();
-      return data.text;
+      const data: GeminiResponse = await response.json();
+      return data.candidates[0]?.content.parts[0]?.text || 'Unable to generate summary.';
 
     } catch (error) {
       console.error('Error in AI summarization:', error);

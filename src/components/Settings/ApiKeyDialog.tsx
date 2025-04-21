@@ -13,14 +13,14 @@ import { Settings } from "lucide-react";
 import { toast } from "@/components/ui/sonner";
 
 export const ApiKeyDialog = () => {
-  const [apiKey, setApiKey] = useState(localStorage.getItem('deepseek_api_key') || '');
+  const [apiKey, setApiKey] = useState(localStorage.getItem('gemini_api_key') || '');
 
   const handleSave = () => {
     if (apiKey.trim()) {
-      localStorage.setItem('deepseek_api_key', apiKey.trim());
+      localStorage.setItem('gemini_api_key', apiKey.trim());
       toast.success("API key saved successfully");
     } else {
-      localStorage.removeItem('deepseek_api_key');
+      localStorage.removeItem('gemini_api_key');
     }
   };
 
@@ -39,14 +39,14 @@ export const ApiKeyDialog = () => {
         <div className="grid gap-4 py-4">
           <div className="space-y-2">
             <label htmlFor="apiKey" className="text-sm font-medium">
-              DeepSeek API Key
+              Google Gemini API Key
             </label>
             <Input
               id="apiKey"
               type="password"
               value={apiKey}
               onChange={(e) => setApiKey(e.target.value)}
-              placeholder="Enter your DeepSeek API key"
+              placeholder="Enter your Gemini API key"
             />
             <p className="text-xs text-muted-foreground">
               Your API key will be stored locally in your browser.
