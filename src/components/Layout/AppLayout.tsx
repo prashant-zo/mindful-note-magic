@@ -1,5 +1,7 @@
-import React, { ReactNode, useState } from 'react';
+
+import React, { ReactNode } from 'react';
 import AppHeader from './AppHeader';
+import { Plus } from 'lucide-react';  // Corrected import
 import {
   AlertDialog,
   AlertDialogAction,
@@ -11,7 +13,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { ApiKeyDialog } from "@/components/Settings/ApiKeyDialog";
-import { Button, Plus } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";  // Kept Button import from shadcn/ui
 
 interface AppLayoutProps {
   children: ReactNode;
